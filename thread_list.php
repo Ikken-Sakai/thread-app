@@ -46,6 +46,7 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
     <meta charset="UTF-8">
     <title>スレッド一覧</title>
     <link rel="stylesheet" href="style_thread.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>

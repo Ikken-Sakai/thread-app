@@ -17,6 +17,7 @@ $token = $_SESSION['form_token'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規スレッド作成</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style_new_thread.css">
 </head>
 <body>

@@ -9,6 +9,7 @@ require_login();
     <meta charset="UTF-8">
     <title>投稿の編集</title>
     <link rel="stylesheet" href="style_edit_thread.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>

@@ -63,6 +63,7 @@ header('Content-Type: text/html; charset=UTF-8');
   <meta charset="UTF-8">
   <title>ログイン | スレッドアプリ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style_login.css">
 </head>
 <body>
