@@ -4,36 +4,36 @@
 【概要】
 このページは掲示板の「スレッド一覧画面」を表示するメイン画面。
 JavaScriptが非同期通信 (fetch API) を用いて `api.php` にアクセスし、
-スレッド一覧・返信・削除などの操作を行う。
+スレッド一覧の取得、返信投稿・削除・編集などを動的に処理する。
 
 【主な処理構成】
 1. PHP部（上部）
    - ログインチェックとユーザー名の取得。
-   - HTML構造の表示。
+   - HTMLの基本構造を出力。
 
 2. JavaScript部（下部）
-   - GETリクエストでスレッド一覧を取得・描画。
-   - POSTリクエストで返信投稿・削除・編集を実行。
-   - ページネーション、ソート、削除、返信フォーム、XSS対策などの実装。
+   - fetch APIを利用してサーバーと非同期通信。
+   - スレッド一覧の表示、返信投稿・削除・編集・ソート・ページネーションなどを実装。
+   - DOM（Document Object Model）を直接操作して画面内容を更新。
 
 【セキュリティ対策】
 - PHP側：
-    - `require_login()` によるログイン未認証ユーザのアクセス制限。
-    - `htmlspecialchars()` によるXSS防止（ユーザー名など出力時にエスケープ）。
+    - `require_login()` による未ログインユーザーのアクセス制限。
+    - `htmlspecialchars()` による出力エスケープ（XSS防止）。
 - JavaScript側：
-    - `escapeHTML()` によるXSS防止（投稿内容・ユーザー名の表示時）。
-    - confirm()による削除確認。
-    - fetch通信でのエラーハンドリングと入力バリデーション。
+    - `escapeHTML()` による出力時エスケープ（XSS防止）。
+    - `confirm()` による削除確認。
+    - fetch通信時のエラーハンドリング・入力バリデーション。
 
 【通信フロー】
 ブラウザ (JavaScript)
-   ↓  fetch()
-   →  api.php（GET/POST）
-   ←  JSONデータ（スレッド・返信・メッセージなど）
+   ↓  fetch()（GET:一覧 / POST:投稿・削除など）
+   →  api.php（GET/POSTでデータ取得・更新）
+   ←  JSON形式の応答（スレッド・返信・結果メッセージなど）
    ↓
-   DOMに反映（スレッド一覧表示） DOM=HTMLをJavaScriptで
-
+   DOMに反映（HTMLを動的に生成して表示）
 */
+
 
 require_once __DIR__ . '/auth.php';
 require_login(); // ログインしていない場合はlogin.phpにリダイレクト
@@ -82,10 +82,10 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
         const API_ENDPOINT = 'api.php'; // API呼び出し先
 
         /**
-         * fetchのラッパー関数(元ある関数を包む新しい関数)。セッションタイムアウト(401)を共通処理する。
-         * @param {string} url - リクエスト先のURL
-         * @param {object} [options] - fetchに渡すオプション (method, bodyなど)
-         * @returns {Promise<Response>} fetchのレスポンスオブジェクト
+         * fetch() の共通ラッパー関数。
+         * - セッションタイムアウト(401 Unauthorized)時はログインページへリダイレクト。
+         * - 通常の通信エラー (404/500 など) は呼び出し元で処理。
+         * - 全てのAPI呼び出しでこの関数を利用し、重複コードを防ぐ。
          */
         async function apiFetch(url, options) {
             const response = await fetch(url, options);
@@ -163,12 +163,14 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
 
         // スレッド一覧をHTMLとして表示
         /**
-         * 受け取ったデータをもとにHTMLを組み立てて画面に表示する関数
-         * @param {Array} threads - APIから受け取ったスレッドの配列データ
-
-         * threadList: 掲示板全体（投稿が一覧表示される場所）
-         * threadElement: 新しい投稿一つ分（タイトル、名前、本文などが含まれる）
-         * appendChild(): 掲示板に新しい投稿を貼り付ける（追加する）行為
+         * スレッド一覧を受け取り、HTML構造を動的に生成して画面に表示する関数。
+         * 各スレッドは以下の要素で構成される：
+         *  - タイトル、投稿者名、本文、投稿日時
+         *  - 「返信一覧表示」ボタン・「編集」「削除」ボタン
+         *  - 返信フォーム（テキストエリア＋送信ボタン）
+         * 
+         * 各要素は innerHTML を使用して一括生成し、
+         * 最後にスレッド一覧コンテナへ appendChild() で追加する。
          */
         function displayThreads(threads) {
             $threadList.innerHTML = '';
@@ -188,7 +190,6 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
                 
             threadElement.innerHTML = `
                 <div class="thread-header">
-                    <div class="thread-header-left">
                     <span class="thread-meta">投稿者: ${escapeHTML(thread.username)}</span>
                     </div>
                     <div class="thread-header-right">
@@ -337,27 +338,22 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
          * ページ上の全ての「返信〇件」ボタンにクリックイベントを設定する関数
          */
         function setupReplyButtons() {
-            const buttons = document.querySelectorAll('.show-replies-btn'); //すべてのHTML分の中から返信ボタンを取り出し格納
-            buttons.forEach(button => {
-                // 同じボタンに何度もイベントを追加しないように、一度クリア(更新)
-                // 2,3回ボタンを押したときにその回数分の処理をしてしまわないように
-                button.replaceWith(button.cloneNode(true));
-            });
-            
-            // クリックイベントの更新
             document.querySelectorAll('.show-replies-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const threadId = button.dataset.threadId;
-                    fetchAndDisplayReplies(threadId);
+                const newButton = button.cloneNode(true);
+                button.replaceWith(newButton);
+                newButton.addEventListener('click', () => {
+                    fetchAndDisplayReplies(newButton.dataset.threadId);
                 });
             });
         }
 
         /**
-         * 特定のスレッドIDに対する返信を取得し、表示/非表示を切り替える非同期関数
-         * @param {string} parentpostid - 返信を取得する親スレッドのid
-         * @param {boolean} forceOpen - trueの場合、閉じる動作を無効化して常に開く
+         * 特定スレッドの返信一覧を取得・表示する。
+         * @param {string} parentPostId - 親スレッドのID
+         * @param {boolean} forceOpen - true の場合、閉じる動作を無効化し常に開く。
+         *    （削除・投稿後にも強制的に開いたまま再描画する目的で使用）
          */
+
         async function fetchAndDisplayReplies(parentPostId, forceOpen = false) {
             const repliesContainer = document.getElementById(`replies-for-${parentPostId}`);
             const button = document.querySelector(`[data-thread-id='${parentPostId}']`);
@@ -524,9 +520,12 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
         }
 
         /**
-         * 返信フォームが送信されたときの処理を非同期で行う関数
-         * @param {Event} event - submitイベントオブジェクト
+         * 返信フォームが送信されたときに実行される処理。
+         * - APIにPOST送信 → DBに新規返信登録。
+         * - 成功時：返信一覧を最新状態で再表示し、入力欄をリセット。
+         * - エラー時：アラート表示＋送信ボタンを復元。
          */
+
         async function submitReply(event) {
             event.preventDefault(); // ページのリロードを防止
 
@@ -586,10 +585,14 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
             }
         }
     
-        // ===============================
-        // 通常返信フォームのキー操作
-        // Enterで送信 / Ctrl+Enter・Shift+Enterで改行
-        // ===============================
+        /**
+         * ページ全体 (document) にクリックイベントを設定し、
+         * 「削除」「編集」ボタンが押されたときのみ対応する処理を呼び出す。
+         * 
+         * ※「イベントデリゲーション(Event Delegation)」というテクニックを利用。
+         *   → 動的に追加されたボタン（fetch後に生成された要素）でも確実に反応する。
+         */
+
         document.addEventListener('keydown', (e) => {
             const textarea = e.target.closest('.reply-form textarea');
             if (!textarea) return; // 返信フォーム以外なら無視
@@ -746,6 +749,16 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
                 buttonElement.textContent = '削除'; // ボタンの表示を元に戻す
             }
         }
+
+        /**
+         * 編集中テキストエリアでのキー操作
+         * Enter        → 保存
+         * Ctrl+Enter   → 改行
+         * Shift+Enter  → 改行
+         * Esc          → 編集キャンセル
+         *
+         * ※ 投稿編集・返信編集のどちらでも共通で動作。
+         */
 
 
         // 返信本文をクリックしたら直接編集モードにする（オプション）
@@ -944,16 +957,23 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
             }
         });
 
-
-
         /**
-         * XSS対策のためのHTMLエスケープ関数
+         * HTML特殊文字を安全に変換して画面に表示するための関数。
+         * 
+         * 【目的】XSS（クロスサイトスクリプティング）防止。
+         * 例）<script> や & などを無害化し、テキストとして表示する。
          */
         function escapeHTML(str) {
             return str ? String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]) : '';
         }
         
-        // 初期化処理
+        /**
+         * ページのDOM構造が完全に読み込まれた後に実行される初期化処理。
+         * - 前回のソート設定を localStorage から復元。
+         * - スレッド一覧を初回表示。
+         * - ソートセレクトのイベントを有効化。
+         */
+
         if ($refreshBtn) { // ボタン要素が確実に見つかった場合のみ設定
              $refreshBtn.addEventListener('click', () => {
                  fetchAndDisplayThreads(); // スレッド一覧を再読み込み
@@ -968,7 +988,7 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
             // ソートセレクト要素を取得
             const sortSelect = document.getElementById('sortSelect');
 
-            // 🔸 保存済みの設定があり、セレクトボックスが存在する場合のみ処理
+            // 保存済みの設定があり、セレクトボックスが存在する場合のみ処理
             if (savedSort && sortSelect) {
                 sortSelect.value = savedSort; // 画面上のセレクトボックスを前回の設定に戻す
 
