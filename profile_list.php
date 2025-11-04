@@ -179,7 +179,7 @@ require_login();
                     <p><strong>部署:</strong> ${escapeHTML(profile.department || '未設定')}</p>
                     <p><strong>趣味:</strong> ${escapeHTML(profile.hobbies || '未設定')}</p>
                     <p><strong>コメント:</strong> ${escapeHTML(profile.comment || '未設定').replace(/\n/g, '<br>')}</p>
-                    <small>最終更新: ${escapeHTML(profile.updated_at || '---')}</small>
+                    <small>最終更新: ${escapeHTML((profile.updated_at || '---').replace(/-/g, '/'))}</small>
                 `;
                 // 組み立てたHTMLを表示エリアに追加する
                 $profileList.appendChild(profileElement);

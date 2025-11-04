@@ -247,6 +247,17 @@ if ($method === 'GET') {
             $stmt->execute(); // 実行
             $replies = $stmt->fetchAll(PDO::FETCH_ASSOC); // 実行結果（返信データ）を全て取得し、PHPの配列に格納する
 
+            // ▼ 日付フォーマット変更（例: 2025-11-04 → 2025/11/04）
+            foreach ($replies as &$r) {
+                if (!empty($r['created_at'])) {
+                    $r['created_at'] = date('Y/m/d H:i:s', strtotime($r['created_at']));
+                }
+                if (!empty($r['updated_at'])) {
+                    $r['updated_at'] = date('Y/m/d H:i:s', strtotime($r['updated_at']));
+                }
+            }
+            unset($r);
+
 
             echo json_encode([
                 'count' => count($replies),
@@ -323,6 +334,18 @@ if ($method === 'GET') {
             $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
             $stmt->execute();
             $threads = $stmt->fetchAll(PDO::FETCH_ASSOC); // 実行結果（親スレッドデータ一式）を取得し、PHPの配列に格納
+
+            // ▼ 日付フォーマット変更（例: 2025-11-04 → 2025/11/04）
+            foreach ($threads as &$t) {
+                if (!empty($t['created_at'])) {
+                    $t['created_at'] = date('Y/m/d H:i:s', strtotime($t['created_at']));
+                }
+                if (!empty($t['updated_at'])) {
+                    $t['updated_at'] = date('Y/m/d H:i:s', strtotime($t['updated_at']));
+                }
+            }
+            unset($t); // 参照解除（安全のため）
+
             $response_data = [
                 'threads' => $threads,
                 'current_user_id' => $_SESSION['user']['id'],
