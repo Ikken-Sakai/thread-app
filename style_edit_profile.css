@@ -91,15 +91,25 @@ h1 {
     background-color: #f7f7f7;   /* 背景薄グレー */
     font-size: 14px;             /* 少し小さめ文字 */
     cursor: pointer;             /* カーソルを指マークに */
-    transition: all 0.25s ease;  /* ホバー時の変化を滑らかに */
     user-select: none;           /* テキスト選択を無効化 */
 }
 
 /* チェック状態 */
 .hobby-options input[type="checkbox"]:checked + span {
-    background-color: #8b8b8b;   /* チェック時の背景色 */
     color: #ffffff;              /* 白文字 */
-    display: inline-block;
+}
+
+/* ボタン全体を変える */
+.hobby-options input[type="checkbox"]:checked + span,
+.hobby-options input[type="checkbox"]:checked + span::before,
+.hobby-options input[type="checkbox"]:checked {
+    background-color: #8b8b8b;
+    color: #fff;
+}
+
+/* ラベル全体を色変化対象にする */
+.hobby-options input[type="checkbox"]:checked + span {
+    background-color: transparent; /* span単体背景は透明に */
 }
 
 /* チェックボックスを非表示 */
@@ -110,6 +120,14 @@ h1 {
 /* チェックボックスの代わりの表示要素 */
 .hobby-options label span {
     display: inline-block;
+}
+
+/* チェックされたときラベル背景変更 */
+.hobby-options input[type="checkbox"]:checked + span,
+.hobby-options label:has(input[type="checkbox"]:checked) {
+    background-color: #8b8b8b;
+    color: #fff;
+    border-color: #8b8b8b;
 }
 
 /* ------------------------------
