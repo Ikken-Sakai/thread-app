@@ -87,6 +87,7 @@ h1 {
     justify-content: space-between; /* 左右に分割配置 */
     align-items: center;         /* 縦中央揃え */
     margin-bottom: 6px;          /* 下に少し余白 */
+    cursor: default;             /* ← ポインタを通常矢印に（入力不可感） */
 }
 
 .thread-meta {
@@ -96,11 +97,13 @@ h1 {
 .thread-date {
     font-size: 13px;             /* 小さめ文字 */
     color: #666;                 /* 薄めのグレー */
+    cursor: default;             /* ← ポインタを通常矢印に（入力不可感） */
 }
 
 .edited-label {
     font-size: 11px;             /* さらに小さい文字 */
     color: #999;                 /* 薄いグレー */
+    cursor: default;             /* ← ポインタを通常矢印に（入力不可感） */
 }
 
 /* ------------------------------
@@ -118,6 +121,7 @@ h1 {
     background: #fff;            /* 白背景 */
     border-left: 4px solid #888; /* 左にラインを追加 */
     padding: 4px 8px;            /* 内側余白 */
+    cursor: default;             /* ← ポインタを通常矢印に（入力不可感） */
     margin-bottom: 10px;         /* 下に余白 */
 }
 
@@ -125,17 +129,19 @@ h1 {
    投稿本文
    ------------------------------ */
 .thread-body p {
-    margin: 8px 0;               /* 上下に少し余白 */
-    line-height: 1.6;            /* 行間を少し広く */
-    background: #fff;            /* 白背景 */
-    border: 1px solid #aaa;      /* 枠線（灰色） */
+    margin: 8px 0;               /* 上下余白 */
+    line-height: 1.6;            /* 行間を広く */
+    background: #f3f3f3;         /* ← 薄いグレーで“静的”に見せる */
+    border: 1px solid #ccc;      /* 枠線を淡く */
     border-radius: 4px;          /* 角を丸く */
     padding: 8px 10px;           /* 内側余白 */
-    white-space: pre-wrap;       /* 改行とスペースを保持 */
-    overflow-wrap: break-word;   /* 単語の途中でも折り返し */
-    word-break: break-all;       /* 英単語なども強制的に改行 */
-    overflow-y: auto;            /* 内容が多い場合に縦スクロール */
-    max-height: 300px;           /* 高さの上限を設定 */
+    white-space: pre-wrap;       /* 改行保持 */
+    overflow-wrap: break-word;   /* 折り返し */
+    word-break: break-all;       /* 強制改行 */
+    overflow-y: auto;            /* 縦スクロール許可 */
+    max-height: 300px;           /* 高さ上限 */
+    cursor: default;             /* ← ポインタを通常矢印に（入力不可感） */
+    color: #333;                 /* 標準文字色 */
 }
 
 p {
@@ -200,6 +206,7 @@ p {
     font-size: 13px;             /* 小さめ文字 */
     color: #666;                 /* 文字色薄め */
     margin-top: 6px;             /* 上に少し余白 */
+    cursor: default;             /* ← ポインタを通常矢印に（入力不可感） */
 }
 
 .reply-right {

@@ -209,14 +209,14 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
 
                 <div class="thread-info">
                     <div class="thread-info-left">
-                    <button class="show-replies-btn" data-thread-id="${thread.id}" data-reply-count="${thread.reply_count}">
+                    <button class="btn show-replies-btn" data-thread-id="${thread.id}" data-reply-count="${thread.reply_count}">
                         返信${thread.reply_count}件
                     </button>
                     </div>
                     <div class="action-buttons">
                     ${thread.user_id === loggedInUserId ? `
-                        <button class="btn-edit" data-href="edit_post.php?id=${thread.id}">編集</button>
-                        <button class="btn-delete delete-btn" data-post-id="${thread.id}">削除</button>
+                        <button class="btn btn-edit" data-href="edit_post.php?id=${thread.id}">編集</button>
+                        <button class="btn btn-delete delete-btn" data-post-id="${thread.id}">削除</button>
                     ` : ''}
                     </div>
                 </div>
@@ -227,7 +227,7 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
 
                 <form class="reply-form" data-parent-id="${thread.id}">
                     <textarea name="body" placeholder="返信を入力..." required rows="2"></textarea>
-                    <button type="submit" class="btn-reply">返信する</button>
+                    <button type="submit" class="btn btn-reply">返信する</button>
                 </form>
                 `;
 
