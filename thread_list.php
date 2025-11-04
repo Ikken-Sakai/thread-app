@@ -721,6 +721,23 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
             }
         }
 
+
+        // 返信本文をクリックしたら直接編集モードにする（オプション）
+        document.addEventListener('click', (e) => {
+            const bodyP = e.target.closest('.reply-item p');
+            if (!bodyP) return;
+
+            // すでにtextareaがあれば何もしない
+            if (bodyP.closest('.reply-item').querySelector('.edit-textarea')) return;
+
+            const replyDiv = bodyP.closest('.reply-item');
+            const editBtn = replyDiv.querySelector('.edit-reply-btn');
+            if (editBtn) {
+                editBtn.click(); // 既存の編集ボタン処理を流用
+            }
+        });
+
+
         // ▼ 返信の編集// ▼ 返信の編集処理（非同期）
         // ページ全体でクリックを監視し、動的に生成されたボタンに対応（イベント委任）
         document.addEventListener('click', async function (e) {
@@ -854,6 +871,48 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
                 }
             } 
         }); 
+
+
+        // ===============================
+        // 編集中のキー操作（Enter保存 / Ctrl+Enter改行 / Escキャンセル）
+        // ===============================
+        document.addEventListener('keydown', (e) => {
+            const textarea = e.target.closest('.edit-textarea');
+            if (!textarea) return; // 編集中以外は無視
+
+            const replyDiv = textarea.closest('.reply-item');
+            const saveBtn = replyDiv.querySelector('.btn-primary');
+            const editBtn = replyDiv.querySelector('.edit-reply-btn');
+
+            // Ctrl+Enter or Shift+Enter なら改行（そのまま挿入して処理終了）
+            if ((e.ctrlKey || e.metaKey || e.shiftKey) && e.key === 'Enter') {
+                return; // 通常の改行を許可（preventDefaultしない）
+            }
+
+            // Enter 単体で保存
+            if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) {
+                e.preventDefault(); // 改行を無効化
+                if (saveBtn) {
+                    saveBtn.click(); // 保存ボタンを押したのと同じ動作
+                }
+            }
+
+            // Esc でキャンセル（元の状態に戻す）
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                const oldText = textarea.dataset.oldText || textarea.value; // 編集前のテキストを取得
+
+                const newP = document.createElement('p');
+                // 改行を維持して戻す（\n → <br> に変換）
+                newP.innerHTML = escapeHTML(oldText).replace(/\n/g, '<br>');
+                newP.dataset.rawBody = oldText;
+
+                textarea.replaceWith(newP);
+                if (saveBtn) saveBtn.remove();
+                if (editBtn) editBtn.disabled = false;
+            }
+        });
+
 
 
         /**

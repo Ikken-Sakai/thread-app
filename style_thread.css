@@ -306,6 +306,54 @@ textarea {
 }
 
 /* ------------------------------
+   返信編集用テキストエリア
+   ------------------------------ */
+.reply-edit textarea,
+.edit-textarea,
+.reply-edit-area {
+    width: 100%;                 /* コンテナ幅いっぱいに広げる */
+    min-width: 100%;             /* flexなどの影響で縮まないよう固定 */
+    box-sizing: border-box;      /* padding・borderを含めた幅指定 */
+    border: 1px solid #aaa;      /* 枠線 */
+    border-radius: 4px;          /* 角丸 */
+    padding: 8px 10px;           /* 内側余白 */
+    font-size: 14px;             /* 標準文字サイズ */
+    resize: vertical;            /* 縦方向のみリサイズ可 */
+    overflow-wrap: break-word;   /* 長文折り返し */
+    word-break: break-all;       /* 英数字なども改行 */
+    white-space: pre-wrap;       /* 改行・スペース保持 */
+    overflow-y: auto;            /* はみ出し時スクロール */
+    max-height: 300px;           /* 上限高さ（任意） */
+    background-color: #fff;      /* 白背景 */
+}
+
+/* ===========================
+   インライン編集（返信編集時）
+   =========================== */
+.edit-textarea {
+    width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    border: 1px solid transparent; /* 通常は枠線を見せない */
+    background: none;              /* 背景を透過（pと同じに） */
+    padding: 8px 10px;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.6;
+    resize: none;                  /* サイズ変更禁止 */
+    white-space: pre-wrap;         /* 改行保持 */
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+/* 編集中はフォーカス時だけ枠を出す */
+.edit-textarea:focus {
+    border: 1px solid #666;
+    background: #fff;
+}
+
+
+/* ------------------------------
    エラーメッセージ
    ------------------------------ */
 .error {
