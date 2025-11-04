@@ -117,7 +117,12 @@ textarea {
     font-size: 14px;             /* 標準文字サイズ */
     resize: vertical;            /* 縦方向にのみサイズ変更可 */
     box-sizing: border-box;      /* paddingを幅に含める */
-    line-height: 1.5;            /* 行間を少し広めに */
+    overflow-wrap: break-word;    /* 単語の途中でも折り返し */
+    word-break: break-all;        /* 英単語なども強制的に改行 */
+    white-space: pre-wrap;        /* 改行・スペースを保持しつつ折り返し */
+    overflow-y: auto;             /* 内容が多い場合に縦スクロールを表示 */
+    max-height: 300px;            /* 高さの上限を設定（任意） */
+   line-height: 1.5;              /* 行間を少し広めに */
 }
 
 /* ------------------------------
