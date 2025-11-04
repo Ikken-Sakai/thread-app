@@ -77,6 +77,10 @@ h1 {
     border-radius: 6px;          /* 角を丸く */
     padding: 14px 16px;          /* 内側余白 */
     margin-bottom: 25px;         /* 下に間隔 */
+    overflow-wrap: break-word;   /* 折り返し */
+    word-break: break-all;       /* 強制改行 */
+    overflow-y: auto;            /* 縦スクロール許可 */
+    max-height: 300px;           /* 高さ上限 */
 }
 
 /* ------------------------------
