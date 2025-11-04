@@ -584,7 +584,33 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
                 submitButton.disabled = false;
                 submitButton.textContent = '返信する';
             }
-    }
+        }
+    
+        // ===============================
+        // 通常返信フォームのキー操作
+        // Enterで送信 / Ctrl+Enter・Shift+Enterで改行
+        // ===============================
+        document.addEventListener('keydown', (e) => {
+            const textarea = e.target.closest('.reply-form textarea');
+            if (!textarea) return; // 返信フォーム以外なら無視
+
+            // Ctrl+Enter or Shift+Enter → 改行を許可
+            if ((e.ctrlKey || e.metaKey || e.shiftKey) && e.key === 'Enter') {
+                return; // 通常の改行をそのまま通す
+            }
+
+            // Enter単体で送信
+            if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+                e.preventDefault(); // 改行を防ぐ
+
+                const form = textarea.closest('.reply-form');
+                const button = form.querySelector('button[type="submit"]');
+                if (button && !button.disabled) {
+                    button.click(); // 返信ボタンを自動クリック
+                }
+            }
+        });
+
 
         // 投稿削除
         /**
@@ -772,13 +798,18 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
                     textarea.value = oldText; // これで改行が<textarea>に反映される
                     textarea.classList.add('edit-textarea');
                     bodyP.replaceWith(textarea); // <p> が <textarea> に入れ替わる
+                    textarea.focus(); // 1回のクリックで入力可能
+
 
                     // 「保存」ボタンを動的に作成
                     const saveBtn = document.createElement('button');
                     saveBtn.textContent = '保存';
                     saveBtn.classList.add('btn', 'btn-sm', 'btn-primary');
                     e.target.after(saveBtn);  // 「編集」ボタンの直後に「保存」を配置
-                    e.target.disabled = true; // 「編集」ボタンを一時的に無効化
+
+                    // 編集ボタンを非表示にする
+                    e.target.style.display = 'none';
+
 
                     // --- 「保存」ボタンが押された時の処理 ---
                     saveBtn.addEventListener('click', async () => {
@@ -844,7 +875,7 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
 
                                 // UIを元に戻す
                                 saveBtn.remove(); // 「保存」ボタンを削除
-                                e.target.disabled = false; // 「編集」ボタンを再度有効化
+                                e.target.style.display = 'inline-block'; // 編集ボタンを再表示
                             
                             // 編集失敗時
                             } else {
@@ -909,7 +940,7 @@ require_login(); // ログインしていない場合はlogin.phpにリダイレ
 
                 textarea.replaceWith(newP);
                 if (saveBtn) saveBtn.remove();
-                if (editBtn) editBtn.disabled = false;
+                if (editBtn) editBtn.style.display = 'inline-block'; // 編集ボタンを再表示
             }
         });
 
