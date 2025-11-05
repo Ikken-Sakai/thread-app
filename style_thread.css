@@ -79,8 +79,6 @@ h1 {
     margin-bottom: 25px;         /* 下に間隔 */
     overflow-wrap: break-word;   /* 折り返し */
     word-break: break-all;       /* 強制改行 */
-    overflow-y: auto;            /* 縦スクロール許可 */
-    max-height: 300px;           /* 高さ上限 */
 }
 
 /* ------------------------------
@@ -142,8 +140,6 @@ h1 {
     white-space: pre-wrap;       /* 改行保持 */
     overflow-wrap: break-word;   /* 折り返し */
     word-break: break-all;       /* 強制改行 */
-    overflow-y: auto;            /* 縦スクロール許可 */
-    max-height: 300px;           /* 高さ上限 */
     cursor: default;             /* ← ポインタを通常矢印に（入力不可感） */
     color: #333;                 /* 標準文字色 */
 }
@@ -151,8 +147,6 @@ h1 {
 p {
     overflow-wrap: break-word;   /* 単語の途中でも折り返し */
     word-break: break-all;       /* 英単語なども強制的に改行 */
-    overflow-y: auto;            /* 内容が多い場合に縦スクロール */
-    max-height: 300px;           /* 高さの上限を設定 */
 }
 
 /* ------------------------------
@@ -266,8 +260,6 @@ p {
     white-space: pre-wrap;       /* 改行を保持 */
     overflow-wrap: break-word;   /* 長文折り返し */
     word-break: break-all;       /* 英数字なども改行 */
-    overflow-y: auto;            /* はみ出し時スクロール */
-    min-height: 120px;           /* 最低高さを確保 */
 }
 
 .edit-textarea:focus {

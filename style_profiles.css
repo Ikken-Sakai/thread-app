@@ -119,6 +119,8 @@ h1 {
 .profile-item h3 {
     font-size: 18px;             /* 少し大きめの文字 */
     margin: 0 0 10px 0;          /* 下に少し余白 */
+    overflow-wrap: break-word;   /* 折り返し */
+    word-break: break-all;       /* 強制改行 */
 }
 
 .profile-item p {
@@ -130,8 +132,6 @@ p {
     overflow-wrap: break-word;    /* 単語の途中でも折り返し */
     word-break: break-all;        /* 英単語なども強制的に改行 */
     white-space: pre-wrap;        /* 改行・スペースを保持しつつ折り返し */
-    overflow-y: auto;             /* 内容が多い場合に縦スクロールを表示 */
-    max-height: 300px;            /* 高さの上限を設定（任意） */
 }
 
 .profile-item small {
