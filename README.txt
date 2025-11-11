@@ -6,6 +6,8 @@
 PHP / MySQL / JavaScript（Fetch API）を使用し、XAMPP環境で動作します。  
 Gitによるソース管理を行い、BacklogおよびGitHubと連携しています。
 
+<img width="743" height="408" alt="Image" src="https://github.com/user-attachments/assets/1c9f8b8a-293d-40e0-95b8-b6badfe19cf8" />
+
 ---
 
 ## 使用技術
