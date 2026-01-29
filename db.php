@@ -8,7 +8,7 @@
 //-----------------------------
 // 接続情報（環境に合わせて変更）
 //-----------------------------
-$dsn      = 'mysql:host=localhost;dbname=chat_app;charset=utf8mb4'; // 接続先・DB名・文字コード
+$dsn      = 'mysql:host=localhost;dbname=thread_app;charset=utf8mb4'; // 接続先・DB名・文字コード
 $db_user  = 'root';    // MySQLユーザー名
 $db_pass  = '';        // MySQLパスワード（XAMPPは空欄がデフォルト）
 
